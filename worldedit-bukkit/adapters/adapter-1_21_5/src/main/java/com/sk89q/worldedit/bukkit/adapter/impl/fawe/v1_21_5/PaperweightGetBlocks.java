@@ -1048,14 +1048,15 @@ public class PaperweightGetBlocks extends AbstractBukkitGetBlocks<ServerLevel, L
     @Override
     public boolean hasSection(int layer) {
         layer -= getMinSectionPosition();
-        return getSections(false)[layer] != null;
+        LevelChunkSection[] sections = getSections(false);
+        return layer >= 0 && layer < sections.length && sections[layer] != null;
     }
 
     @Override
     public boolean hasNonEmptySection(int layer) {
         layer -= getMinSectionPosition();
-        LevelChunkSection section = getSections(false)[layer];
-        return section != null && !section.hasOnlyAir();
+        LevelChunkSection[] sections = getSections(false);
+        return layer >= 0 && layer < sections.length && sections[layer] != null && !sections[layer].hasOnlyAir();
     }
 
     @Override
