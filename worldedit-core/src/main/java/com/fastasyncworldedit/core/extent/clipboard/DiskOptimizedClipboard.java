@@ -266,23 +266,37 @@ public class DiskOptimizedClipboard extends LinearClipboard {
                 Tag posTag = tag.getValue().get("Pos");
                 if (posTag == null) {
                     LOGGER.warn("Missing pos tag: {}", tag);
-                    return;
+                    entitiesCount--;
+                    continue;  // Skip this entity
                 }
-                List<DoubleTag> pos = (List<DoubleTag>) posTag.getValue();
-                double x = pos.get(0).getValue();
-                double y = pos.get(1).getValue();
-                double z = pos.get(2).getValue();
-                BaseEntity entity = new BaseEntity(tag);
-                BlockArrayClipboard.ClipboardEntity clipboardEntity = new BlockArrayClipboard.ClipboardEntity(
-                        this,
-                        x,
-                        y,
-                        z,
-                        0f,
-                        0f,
-                        entity
-                );
-                this.entities.add(clipboardEntity);
+
+                // Validate that Id exists and is not empty
+                Tag idTag = tag.getValue().get("Id");
+                if (idTag == null || idTag.getValue() == null || idTag.getValue().toString().isEmpty()) {
+                    LOGGER.warn("Missing or empty Id tag for entity: {}", tag);
+                    entitiesCount--;
+                    continue;  // Skip this entity
+                }
+
+                try {
+                    List<DoubleTag> pos = (List<DoubleTag>) posTag.getValue();
+                    double x = pos.get(0).getValue();
+                    double y = pos.get(1).getValue();
+                    double z = pos.get(2).getValue();
+                    BaseEntity entity = new BaseEntity(tag);
+                    BlockArrayClipboard.ClipboardEntity clipboardEntity = new BlockArrayClipboard.ClipboardEntity(
+                            this,
+                            x,
+                            y,
+                            z,
+                            0f,
+                            0f,
+                            entity
+                    );
+                    this.entities.add(clipboardEntity);
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to load entity from clipboard", e);
+                }
                 entitiesCount--;
             }
         } catch (Exception e) {
