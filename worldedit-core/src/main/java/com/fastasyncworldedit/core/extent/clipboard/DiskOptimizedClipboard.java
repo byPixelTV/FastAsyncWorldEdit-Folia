@@ -271,9 +271,9 @@ public class DiskOptimizedClipboard extends LinearClipboard {
                 }
 
                 // Validate that Id exists and is not empty
-                Tag idTag = tag.getValue().get("Id");
+                Tag idTag = tag.getValue().get("id");
                 if (idTag == null || idTag.getValue() == null || idTag.getValue().toString().isEmpty()) {
-                    LOGGER.warn("Missing or empty Id tag for entity: {}", tag);
+                    LOGGER.warn("Missing or empty id tag for entity: {}", tag);
                     entitiesCount--;
                     continue;  // Skip this entity
                 }
