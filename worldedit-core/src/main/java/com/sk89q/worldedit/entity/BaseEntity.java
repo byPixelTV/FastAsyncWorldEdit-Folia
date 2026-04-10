@@ -123,8 +123,17 @@ public class BaseEntity implements NbtValued {
 
     //FAWE start
     public BaseEntity(CompoundTag tag) {
-        this(EntityTypes.parse(tag.getString("Id")), tag);
+        this(EntityTypes.parse(resolveEntityId(tag)), tag);
     }
+
+    private static String resolveEntityId(CompoundTag tag) {
+        String id = tag.getString("Id");
+        if (id == null || id.isEmpty()) {
+            id = tag.getString("id");
+        }
+        return id == null ? "" : id;
+    }
+
 
     /**
      * Attempt to retrieve the entity's UUID from its NBT tag

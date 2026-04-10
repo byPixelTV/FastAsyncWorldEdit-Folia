@@ -99,32 +99,23 @@ public class BukkitEntity implements Entity {
     }
 
     @Override
+    @Override
     public BaseEntity getState() {
         org.bukkit.entity.Entity entity = entityRef.get();
-        if (entity != null) {
-            if (entity instanceof Player) {
-                return null;
-            }
-
-            BukkitImplAdapter adapter = WorldEditPlugin.getInstance().getBukkitImplAdapter();
-            if (adapter != null) {
-                if (FoliaUtil.isFoliaServer()) {
-                    org.bukkit.Location location = entity.getLocation();
-                    CompletableFuture<BaseEntity> future = new CompletableFuture<>();
-                    Bukkit.getServer().getRegionScheduler().run(
-                            WorldEditPlugin.getInstance(),
-                            location,
-                            scheduledTask -> future.complete(adapter.getEntity(entity))
-                    );
-                    return future.join();
-                }
-                return adapter.getEntity(entity);
-            } else {
-                return null;
-            }
-        } else {
+        if (entity == null) {
             return null;
         }
+
+        if (entity instanceof Player) {
+            return null;
+        }
+
+        BukkitImplAdapter adapter = WorldEditPlugin.getInstance().getBukkitImplAdapter();
+        if (adapter == null) {
+            return null;
+        }
+
+        return adapter.getEntity(entity);
     }
 
     @Override
