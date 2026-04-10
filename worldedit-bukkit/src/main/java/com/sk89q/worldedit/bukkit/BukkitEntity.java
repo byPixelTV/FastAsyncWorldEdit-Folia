@@ -107,8 +107,8 @@ public class BukkitEntity implements Entity {
             return null;
         }
 
-        // On Folia, reading full entity state can cross region/thread boundaries and block.
-        if (FoliaUtil.isFoliaServer()) {
+        // Avoid blocking state snapshots on Folia region/global scheduler threads.
+        if (FoliaUtil.isFoliaServer() || Thread.currentThread().getName().startsWith("Folia Region Scheduler Thread")) {
             return new BaseEntity(BukkitAdapter.adapt(type));
         }
 
