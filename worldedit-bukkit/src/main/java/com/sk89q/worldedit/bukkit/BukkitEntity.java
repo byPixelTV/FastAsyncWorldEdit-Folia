@@ -30,12 +30,10 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.NullWorld;
 import io.papermc.lib.PaperLib;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.concurrent.CompletableFuture;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -99,7 +97,6 @@ public class BukkitEntity implements Entity {
     }
 
     @Override
-    @Override
     public BaseEntity getState() {
         org.bukkit.entity.Entity entity = entityRef.get();
         if (entity == null) {
@@ -108,6 +105,11 @@ public class BukkitEntity implements Entity {
 
         if (entity instanceof Player) {
             return null;
+        }
+
+        // On Folia, reading full entity state can cross region/thread boundaries and block.
+        if (FoliaUtil.isFoliaServer()) {
+            return new BaseEntity(BukkitAdapter.adapt(type));
         }
 
         BukkitImplAdapter adapter = WorldEditPlugin.getInstance().getBukkitImplAdapter();
